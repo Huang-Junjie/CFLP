@@ -1,4 +1,4 @@
-ï»¿#include <string>
+#include <string>
 #include <ctime>
 #include <cmath>
 #include <cstdlib>
@@ -6,7 +6,7 @@
 #include "io.h"
 
 
-//è·å¾—ä¸€ä¸ªé—®é¢˜çš„åˆå§‹è§£
+//»ñµÃÒ»¸öÎÊÌâµÄ³õÊ¼½â
 void getInitalSolution(problem &p, solution &s) {
 	int mincost;
 	int minindex;
@@ -17,7 +17,7 @@ void getInitalSolution(problem &p, solution &s) {
 	s.cost = 0;
 	for (bool i : s.isOpen) i = false;
 	for (int i = 0; i < p.facilityNum; i++) s.capacityLeft[i] = p.capacity[i];
-	//è´ªå¿ƒæ³•å¾—åˆ°åˆå§‹è§£
+	//Ì°ĞÄ·¨µÃµ½³õÊ¼½â
 	for (int i = 0; i < p.customerNum; i++) {
 		mincost = INT_MAX;
 		minindex = -1;
@@ -39,7 +39,7 @@ void getInitalSolution(problem &p, solution &s) {
 
 
 
-//éšæœºå°†1åé¡¾å®¢åˆ†é…ç»™å¦ä¸€ä¸ªè®¾æ–½
+//Ëæ»ú½«1Ãû¹Ë¿Í·ÖÅä¸øÁíÒ»¸öÉèÊ©
 void exchangeOp(problem &p, solution &s) {
 	int cus = rand() % p.customerNum;
 	int fac = rand() % p.facilityNum;
@@ -49,7 +49,7 @@ void exchangeOp(problem &p, solution &s) {
 			continue;
 		}
 		if (s.capacityLeft[fac] < p.demand[cus]) {
-			//4/5æ¦‚ç‡é€‰å¦å¤–ä¸€ä¸ªè®¾æ–½ï¼Œ1/5æ¦‚ç‡é€‰å¦å¤–ä¸€åé¡¾å®¢
+			//4/5¸ÅÂÊÑ¡ÁíÍâÒ»¸öÉèÊ©£¬1/5¸ÅÂÊÑ¡ÁíÍâÒ»Ãû¹Ë¿Í
 			if (rand() % 5) fac = rand() % p.facilityNum;
 			else cus = rand() % p.customerNum;
 			continue;
@@ -72,7 +72,7 @@ void exchangeOp(problem &p, solution &s) {
 }
 
 
-//éšæœºäº¤æ¢2åé¡¾å®¢åˆ†é…çš„è®¾æ–½
+//Ëæ»ú½»»»2Ãû¹Ë¿Í·ÖÅäµÄÉèÊ©
 void swapOp(problem &p, solution &s) {
 	int cus1 = rand() % p.customerNum;
 	int cus2 = rand() % p.customerNum;
@@ -82,7 +82,7 @@ void swapOp(problem &p, solution &s) {
 			cus2 = rand() % p.customerNum;
 			continue;
 		}
-		//ä»¤cus2ä¸ºéœ€æ±‚å¤§çš„é¡¾å®¢
+		//Áîcus2ÎªĞèÇó´óµÄ¹Ë¿Í
 		if (p.demand[cus1] > p.demand[cus2]) {
 			int temp = cus1;
 			cus1 = cus2;
@@ -109,7 +109,7 @@ void swapOp(problem &p, solution &s) {
 }
 
 
-//äº¤æ¢2åé¡¾å®¢åˆ†é…çš„è®¾æ–½,æ— æ³•äº¤æ¢åˆ™ç›´æ¥è¿”å›
+//½»»»2Ãû¹Ë¿Í·ÖÅäµÄÉèÊ©,ÎŞ·¨½»»»ÔòÖ±½Ó·µ»Ø
 void swapCus(problem &p, solution &s, int cus1, int cus2) {
 	if (p.demand[cus1] > p.demand[cus2]) {
 		int temp = cus1;
@@ -133,7 +133,7 @@ void swapCus(problem &p, solution &s, int cus1, int cus2) {
 }
 
 
-//éšæœºé€‰2åé¡¾å®¢ï¼Œå°†è¿™ä¸¤åé¡¾å®¢é—´çš„æ‰€æœ‰é¡¾å®¢åˆ†é…çš„è®¾æ–½åè½¬
+//Ëæ»úÑ¡2Ãû¹Ë¿Í£¬½«ÕâÁ½Ãû¹Ë¿Í¼äµÄËùÓĞ¹Ë¿Í·ÖÅäµÄÉèÊ©·´×ª
 void inversionOp(problem &p, solution &s) {
 	int cus1 = rand() % p.customerNum;
 	int cus2 = rand() % p.customerNum;
@@ -157,11 +157,11 @@ void inversionOp(problem &p, solution &s) {
 }
 
 
-/*  å°†è§£sæŒ‰æ¦‚ç‡æ”¹å˜ä¸ºå…¶ä¸€ä¸ªé‚»åŸŸè§£
-*	é‚»åŸŸæ“ä½œï¼š
-*		1. éšæœºå°†1åé¡¾å®¢åˆ†é…ç»™å¦ä¸€ä¸ªè®¾æ–½
-*		2. éšæœºäº¤æ¢2åé¡¾å®¢åˆ†é…çš„è®¾æ–½
-*		3. éšæœºé€‰2åé¡¾å®¢ï¼Œå°†è¿™ä¸¤åé¡¾å®¢é—´çš„æ‰€æœ‰é¡¾å®¢åˆ†é…çš„è®¾æ–½åè½¬
+/*  ½«½âs°´¸ÅÂÊ¸Ä±äÎªÆäÒ»¸öÁÚÓò½â
+*	ÁÚÓò²Ù×÷£º
+*		1. Ëæ»ú½«1Ãû¹Ë¿Í·ÖÅä¸øÁíÒ»¸öÉèÊ©
+*		2. Ëæ»ú½»»»2Ãû¹Ë¿Í·ÖÅäµÄÉèÊ©
+*		3. Ëæ»úÑ¡2Ãû¹Ë¿Í£¬½«ÕâÁ½Ãû¹Ë¿Í¼äµÄËùÓĞ¹Ë¿Í·ÖÅäµÄÉèÊ©·´×ª
 */
 void getNewSolution(problem &p, solution &s) {
 	int op = rand() % 3;
@@ -172,13 +172,9 @@ void getNewSolution(problem &p, solution &s) {
 
 
 int main()
-{	
+{
 	vector<int> result;
 	vector<float> runtime;
-	double Tmax = 100;
-	double Tmin = 0.1;
-	int times = 1500;
-	double rate = 0.99;
 	for (int i = 1; i < 72; i++) {
 		cout << "---------------------------" << endl;
 		cout << "P" << i << ":" << endl;
@@ -189,28 +185,24 @@ int main()
 		readInstance("Instances/p" + to_string(i), pro);
 		getInitalSolution(pro, sol);
 		solution newSol(sol);
-		double T = Tmax;
-		while (T > Tmin) {
-			for (int i = 0; i < times; i++) {
-				//å¯»æ‰¾é‚»åŸŸè§£
-				getNewSolution(pro, newSol);
-				//è‹¥æ–°è§£costå°ï¼Œåˆ™ç›´æ¥æ¥å—
-				//è‹¥æ–°è§£costå¤§ï¼Œåˆ™ä»¥exp(-(newcost - cost)/ T)
-				if(newSol.cost < sol.cost || 
-					rand() / (RAND_MAX + 1.0) < exp((sol.cost - newSol.cost) / T)) {
-					sol = newSol;
-				}
-				else newSol = sol;
-				/*cerr << i << endl;*/
+		for (int i = 0; i < 100000; i++) {
+			//Ñ°ÕÒÁÚÓò½â
+			getNewSolution(pro, newSol);
+			//ÈôĞÂ½âcostĞ¡£¬ÔòÖ±½Ó½ÓÊÜ
+			if (newSol.cost < sol.cost) {
+				sol = newSol;
 			}
-			T *= rate;
-			cout << "T: " << T << endl;
-			printSolution(sol);
+			else newSol = sol;
+			if (i % 1000 == 0) {
+				cout << "times: " << i << endl;
+				printSolution(sol);
+			}
 		}
+
 		result.push_back(sol.cost);
 		runtime.push_back((clock() - startTime) / CLK_TCK);
-		writeSolution("Results/SA/p" + to_string(i) + ".txt", sol);
-		
+		writeSolution("Results/LS/p" + to_string(i) + ".txt", sol);
+
 	}
-	wirteResultTable("Results/SATable.csv", result, runtime);
+	wirteResultTable("Results/LSTable.csv", result, runtime);
 }
