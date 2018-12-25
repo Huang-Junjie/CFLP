@@ -11,16 +11,14 @@
 pair<int, int> findLeastCostFacility(problem &p, solution &s, int &cus) {
 	int mincost = INT_MAX;
 	int minindex = -1;
-	int cost;
 	for (int i = 0; i < p.facilityNum; i++) {
 		if (s.capacityLeft[i] < p.demand[cus]) continue;
-		cost = s.isOpen[i] ? 0 : p.openingCost[i];
-		cost += p.assignmentCost[cus][i];
-		if (cost < mincost) {
-			mincost = cost;
+		if (p.assignmentCost[cus][i] < mincost) {
+			mincost = p.assignmentCost[cus][i];
 			minindex = i;
 		}
 	}
+	if (!s.isOpen[minindex]) mincost += p.openingCost[minindex];
 	return make_pair(minindex, mincost);
 }
 
@@ -279,9 +277,9 @@ void localSearch() {
 void sa() {
 	vector<int> result;
 	vector<float> runtime;
-	double Tmax = 100;
+	double Tmax = 500;
 	double Tmin = 0.1;
-	int times = 1500;
+	int times = 1000;
 	double rate = 0.99;
 	for (int i = 1; i < 72; i++) {
 		cout << "---------------------------" << endl;
@@ -293,6 +291,7 @@ void sa() {
 		readInstance("Instances/p" + to_string(i), pro);
 		getInitalSolution(pro, sol);
 		solution newSol(sol);
+		solution bestSol(sol);
 		double T = Tmax;
 		while (T > Tmin) {
 			for (int j = 0; j < times; j++) {
@@ -305,22 +304,22 @@ void sa() {
 					sol = newSol;
 				}
 				else newSol = sol;
+				if (sol.cost < bestSol.cost) bestSol = sol;
 			}
 			T *= rate;
 			cout << "p" << i << ": T: " << T << endl;
 			printSolution(sol);
 		}
-		result.push_back(sol.cost);
+		result.push_back(bestSol.cost);
 		runtime.push_back((clock() - startTime) / CLK_TCK);
-		writeSolution("Results/SA/p" + to_string(i) + ".txt", sol);
+		writeSolution("Results/SA/p" + to_string(i) + ".txt", bestSol);
 	}
 	wirteResultTable("Results/SATable.csv", result, runtime);
 }
 
 
-
 int main() {
-	greedy();
-	localSearch();
+	/*greedy();
+	localSearch();*/
 	sa();
 }
